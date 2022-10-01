@@ -1,18 +1,21 @@
 import { Note } from '../../types';
 import { useState, useCallback } from 'react';
 import {
-  create
+  create,
+    updateNote
  } from '../../features/notes/notesSlice';
-import { useAppSelector, useAppDispatch } from '../../app/hooks';
+
+import {  useAppDispatch } from '../../app/hooks';
 
 interface Props {
     closeModal: () => void;
-    note?: Note;
+    activeNote: Note | null;
+    setActiveNote: (note: (Note | null)) => any;
 }
 
 
 
-const Modal = ({ closeModal, note }: Props) => {
+const Modal = ({ closeModal, activeNote, setActiveNote }: Props) => {
    const initialNote = {
         title: '',
         content: '',
@@ -20,7 +23,7 @@ const Modal = ({ closeModal, note }: Props) => {
     };
    const dispatch = useAppDispatch();
 
-   const initialForm = note || initialNote;
+   const initialForm = activeNote || initialNote;
     const [form, setForm] = useState(initialForm);
 
     const createNote = () => {
@@ -35,8 +38,15 @@ const Modal = ({ closeModal, note }: Props) => {
       closeModal();
     };
 
-    const updateNote = () => {
-
+    const updateExistingNote = () => {
+        if(!activeNote) return;
+      const updatedNote = {
+          ...activeNote,
+          ...form
+      };
+      dispatch(updateNote(updatedNote));
+      setActiveNote(null);
+      closeModal();
     };
 
     const handleChange = useCallback((e: any) => {
@@ -52,14 +62,14 @@ const Modal = ({ closeModal, note }: Props) => {
 
     const onSubmit = (e: any) => {
         e.preventDefault();
-        note?.id ? updateNote() : createNote();
+        activeNote?.id ? updateExistingNote() : createNote();
     };
     return (
         <div className="popup-box">
             <div className="popup">
                 <div className="content">
                     <header>
-                        <p>{note ? 'Update a note' : 'Create a note'}</p>
+                        <p>{activeNote ? 'Update a note' : 'Create a note'}</p>
                         <i className="uil uil-times" onClick={closeModal}/>
                     </header>
                     <form action="#">
@@ -79,7 +89,7 @@ const Modal = ({ closeModal, note }: Props) => {
                                 <option value="idea">Idea</option>
                             </select>
                         </div>
-                        <button onClick={onSubmit}>{note ? 'update' : 'create'}</button>
+                        <button onClick={onSubmit}>{activeNote ? 'Update' : 'Create'}</button>
                     </form>
                 </div>
             </div>

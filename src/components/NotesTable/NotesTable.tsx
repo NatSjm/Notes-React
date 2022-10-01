@@ -7,12 +7,13 @@ import NoteRow from '../NotesRow';
 type TableProps = {
    notes: Note[];
    onAddButtonClick?: () => any;
+   onEditClick: (note: Note) => void;
 };
 
-const NotesTable = ({notes, onAddButtonClick}: TableProps) => {
+const NotesTable = ({notes, onAddButtonClick, onEditClick}: TableProps) => {
     const renderNotes = useMemo(() => (
-        (notes|| []).map((note: Note) => <NoteRow key={note.id} note={note}/>)
-    ),[notes]);
+        (notes|| []).map((note: Note) => <NoteRow onEditClick={onEditClick} key={note.id} note={note}/>)
+    ),[notes, onEditClick]);
     return (
         <div className="table-wrapper">
             <div className="table-header">
