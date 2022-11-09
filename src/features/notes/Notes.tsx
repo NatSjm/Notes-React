@@ -58,20 +58,7 @@ const handleEditClick = useCallback((note: Note) => {
   useEffect(() => {
     const tempArchivedNotes: Note[] = [];
     const tempUnArchivedNotes: Note[] = [];
-    const tempCategories = {
-      task: {
-        archived: 0,
-        unArchived: 0
-      },
-      idea: {
-        archived: 0,
-        unArchived: 0
-      },
-      thought: {
-        archived: 0,
-        unArchived: 0
-      }};
-
+    const tempCategories = structuredClone(initialCategories);
 
 
     notes.forEach((note) => {
